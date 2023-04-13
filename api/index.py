@@ -22,11 +22,13 @@ def respond():
     update = telegram.Update.de_json(request.get_json(force=True), bot)
 
     # 处理消息
-    if update.message:
+    if update is None:
+        bot.sendMessage(chat_id=0000, text='wrong message')
+    else:
         text = update.message.text
         chat_id = update.message.chat_id
         bot.sendMessage(chat_id=chat_id, text=text)
-
+        
     return 'ok'
 
 
