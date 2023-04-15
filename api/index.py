@@ -33,7 +33,7 @@ def respond():
 
 
 @app.route('/welcome/{}'.format(BOT_TOKEN), methods=['POST'])
-def respond():
+def getToken():
     return BOT_TOKEN
 
 
