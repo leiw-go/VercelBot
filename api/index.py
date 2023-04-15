@@ -32,6 +32,11 @@ def respond():
     return 'ok'
 
 
+@app.route('/welcome/{}'.format(BOT_TOKEN), methods=['POST'])
+def respond():
+    return BOT_TOKEN
+
+
 @app.route('/')
 def welcome():
     return 'Hello, I am a Bot'
