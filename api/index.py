@@ -60,13 +60,13 @@ async def set_webhook():
     await bot.setWebhook(url=WEBHOOK_URL)
 
 
-@app.route('/test')
-def testBot():
-    application = ApplicationBuilder().token('BOT_TOKEN').build()
+application = ApplicationBuilder().token('BOT_TOKEN').build()
 
-    start_handler = CommandHandler('start', start)
-    application.add_handler(start_handler)
+start_handler = CommandHandler('start', start)
+application.add_handler(start_handler)
 
-    application.run_polling()
-
-    return 'Hello, I am a Bot'
+application.run_webhook(
+    listen='0.0.0.0',
+    port=443,
+    webhook_url='https://boyduty.club:443'
+)
