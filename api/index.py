@@ -32,7 +32,7 @@ def respond():
     return 'ok'
 
 
-@app.route('/welcome/{}'.format(BOT_TOKEN), methods=['POST'])
+@app.route('/welcome/{}'.format(BOT_TOKEN), methods=['GET'])
 def getToken():
     return BOT_TOKEN
 
