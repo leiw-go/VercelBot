@@ -16,3 +16,8 @@ def webhook():
     text = update.message.text
     bot.sendMessage(chat_id=chat_id, text=text)
     return 'ok'
+
+
+@app.route('/', methods=['GET'])
+def hello():
+    return 'I am a Bot'
