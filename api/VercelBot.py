@@ -55,8 +55,11 @@ def handle_all(update: Update):
     chat_id = update.message.chat.id
     query = MyTable.query
     results = query.find()
-    links = [row.get('link') for row in results]
-    bot.sendMessage(chat_id=chat_id, text='\n'.join(links))
+    if results is None:
+        bot.sendMessage(chat_id=chat_id, text='links are empty, add your collected link')
+    else:
+        links = [row.get('link') for row in results]
+        bot.sendMessage(chat_id=chat_id, text='\n'.join(links))
     return 'ok'
 
 
@@ -70,6 +73,6 @@ def handle_add_link(update: Update):
     chat_id = update.message.chat_id
     text = update.message.text
     links = MyTable()
-    links.set('links', text)
+    links.set('link', text)
     links.save()
     bot.sendMessage(chat_id=chat_id, text='Girls link added')
