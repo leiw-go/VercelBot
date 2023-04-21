@@ -1,4 +1,4 @@
-Flask[async]==2.2.3
+Flask[async]
 python-telegram-bot==20.2
 httpx~=0.23.3
 leancloud~=2.9.12
