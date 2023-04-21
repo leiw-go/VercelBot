@@ -15,7 +15,7 @@ bot = Bot(token=BOT_TOKEN)
 dispatcher = Dispatcher(bot, None, workers=0)
 client = AsyncClient()
 
-leancloud.init('YOUR_APP_ID', 'YOUR_APP_KEY')
+leancloud.init(APP_ID, APP_KEY)
 
 # 用你的数据表名称替换
 MyTable = leancloud.Object.extend('links')

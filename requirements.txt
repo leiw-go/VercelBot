@@ -1,3 +1,4 @@
 Flask[async]
 python-telegram-bot==13.7
-httpx
+httpx~=0.24.0
+leancloud~=2.9.12
