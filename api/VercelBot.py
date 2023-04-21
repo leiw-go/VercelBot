@@ -11,7 +11,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 # 用你的bot token替换
 bot = Bot(token=BOT_TOKEN)
 dispatcher = Dispatcher(bot, None, workers=0)
-client = AsyncClient(limits={"max_connections": 100})
+client = AsyncClient()
 
 
 def handle_message(update: Update, context):
