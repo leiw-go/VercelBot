@@ -48,7 +48,7 @@ def webhook():
 
 @app.route('/', methods=['GET'])
 def hello():
-    return 'I am a Bot'
+    return 'I am a develop Bot. Coding ...'
 
 
 def handle_all(update: Update):
