@@ -1,3 +1,4 @@
 Flask[async]
 python-telegram-bot==13.7
 httpx
+mysql-connector
