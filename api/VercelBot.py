@@ -1,6 +1,7 @@
 import os
 import requests
 import leancloud
+import asyncio
 from telegram import Update, Bot
 from telegram.ext import *
 from telegram.ext.filters import MessageFilter
@@ -105,12 +106,17 @@ application.add_handler(MessageHandler(FilterAwesome(), message_group_link))
 # application.add_handler(MessageHandler(filters.FORWARDED & filters.VIDEO, message_great_video))
 application.add_handler(MessageHandler(filters.VIDEO, message_great_video))
 
+update_queue = application.update_queue
+
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     update = Update.de_json(request.get_json(force=True), Bot(BOT_TOKEN))
-    application.process_update(update)
-    return "ok"
+    update_queue.put(update)
+    loop = asyncio.get_event_loop()
+    future = loop.run_in_executor(None, application.start)
+    result = future.result()
+    return result
 
 
 @app.route('/', methods=['GET'])
