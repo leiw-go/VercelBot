@@ -107,9 +107,9 @@ application.add_handler(MessageHandler(filters.VIDEO, message_great_video))
 
 
 @app.route('/webhook', methods=['POST'])
-async def webhook():
+def webhook():
     update = Update.de_json(request.get_json(force=True), Bot(BOT_TOKEN))
-    await application.process_update(update)
+    application.process_update(update)
     return "ok"
 
 
