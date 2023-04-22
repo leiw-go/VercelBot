@@ -1,5 +1,5 @@
 Flask[async]
-python-telegram-bot==20.2
+python-telegram-bot==13.7
 httpx~=0.23.3
 leancloud~=2.9.12
 requests~=2.28.2

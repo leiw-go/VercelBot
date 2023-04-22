@@ -1,12 +1,12 @@
 import os
 import requests
 import leancloud
-import asyncio
 from telegram import Update, Bot
 from telegram.ext import *
+from telegram.ext import filters
 from telegram.ext.filters import MessageFilter
 from httpx import AsyncClient
-# from flask import Flask, request
+from flask import Flask, request
 
 # 定义常量
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -14,26 +14,25 @@ APP_ID = os.getenv('LEANCLOUD_APP_ID')
 APP_KEY = os.getenv('LEANCLOUD_APP_KEY')
 
 # 初始化
-# app = Flask(__name__)
+app = Flask(__name__)
 leancloud.init(APP_ID, APP_KEY)
 client = AsyncClient()
-application = ApplicationBuilder().token(BOT_TOKEN).build()
 urls = []
 
-# bot = Bot(token=BOT_TOKEN)
-# dispatcher = Dispatcher(bot, None, workers=0)
+bot = Bot(token=BOT_TOKEN)
+dispatcher = Dispatcher(bot, None, workers=0)
 
 # 用你的数据表名称替换
 linksTable = leancloud.Object.extend('links')
 videosTable = leancloud.Object.extend('videos')
 
 
-async def command_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def command_start(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot to make you happy")
     return 'ok'
 
 
-async def command_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def command_all(update: Update, context: CallbackContext):
     query = linksTable.query
     results = query.find()
     if results is None:
@@ -44,7 +43,7 @@ async def command_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return 'ok'
 
 
-async def command_show(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def command_show(update: Update, context: CallbackContext):
     query = videosTable.query
     results = query.find()
     if results is None:
@@ -57,12 +56,12 @@ async def command_show(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return 'ok'
 
 
-async def command_great(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def command_great(update: Update, context: CallbackContext):
     await context.bot.sendMessage(chat_id=update.effective_chat.id, text='Great girls adding ...')
     return 'ok'
 
 
-async def message_group_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def message_group_link(update: Update, context: CallbackContext):
     # 在这里处理接收到的消息
     text = update.message.text
     links = linksTable()
@@ -98,25 +97,22 @@ def getUrl(files) -> urls:
 
 
 # dispatcher.add_handler(MessageHandler(Filters.text, handle_message))
-application.add_handler(CommandHandler("start", command_start))
-application.add_handler(CommandHandler("groups", command_all))
-application.add_handler(CommandHandler("show", command_show))
-application.add_handler(CommandHandler("great", command_great))
-application.add_handler(MessageHandler(FilterAwesome(), message_group_link))
-# application.add_handler(MessageHandler(filters.FORWARDED & filters.VIDEO, message_great_video))
-application.add_handler(MessageHandler(filters.VIDEO, message_great_video))
+dispatcher.add_handler(CommandHandler("start", command_start))
+dispatcher.add_handler(CommandHandler("groups", command_all))
+dispatcher.add_handler(CommandHandler("show", command_show))
+dispatcher.add_handler(CommandHandler("great", command_great))
+dispatcher.add_handler(MessageHandler(FilterAwesome(), message_group_link))
+# dispatcher.add_handler(MessageHandler(filters.FORWARDED & filters.VIDEO, message_great_video))
+dispatcher.add_handler(MessageHandler(filters.Filters.video, message_great_video))
 
-application.run_webhook(port=443, url_path='/helloworld', webhook_url='vercel-bot-git-develop-leiw-go.vercel.app')
 
-# @app.route('/webhook', methods=['POST'])
-# def webhook():
-#     update = Update.de_json(request.get_json(force=True), Bot(BOT_TOKEN))
-#     loop = asyncio.get_event_loop()
-#     future = loop.run_in_executor(None, application.start)
-#     result = future.result()
-#     return result
-#
-#
-# @app.route('/', methods=['GET'])
-# def hello():
-#     return 'I am a develop Bot. Coding ...'
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    update = Update.de_json(request.get_json(force=True), Bot(BOT_TOKEN))
+    dispatcher.process_update(update)
+    return 'ok'
+
+
+@app.route('/', methods=['GET'])
+def hello():
+    return 'I am a develop Bot. Coding ...'
