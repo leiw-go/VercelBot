@@ -6,7 +6,7 @@ from telegram import Update, Bot
 from telegram.ext import *
 from telegram.ext.filters import MessageFilter
 from httpx import AsyncClient
-from flask import Flask, request
+# from flask import Flask, request
 
 # 定义常量
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -14,7 +14,7 @@ APP_ID = os.getenv('LEANCLOUD_APP_ID')
 APP_KEY = os.getenv('LEANCLOUD_APP_KEY')
 
 # 初始化
-app = Flask(__name__)
+# app = Flask(__name__)
 leancloud.init(APP_ID, APP_KEY)
 client = AsyncClient()
 application = ApplicationBuilder().token(BOT_TOKEN).build()
@@ -106,19 +106,17 @@ application.add_handler(MessageHandler(FilterAwesome(), message_group_link))
 # application.add_handler(MessageHandler(filters.FORWARDED & filters.VIDEO, message_great_video))
 application.add_handler(MessageHandler(filters.VIDEO, message_great_video))
 
-update_queue = application.update_queue
+application.run_webhook(port=443, url_path='/helloworld', webhook_url='vercel-bot-git-develop-leiw-go.vercel.app')
 
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    update = Update.de_json(request.get_json(force=True), Bot(BOT_TOKEN))
-    update_queue.put(update)
-    loop = asyncio.get_event_loop()
-    future = loop.run_in_executor(None, application.start)
-    result = future.result()
-    return result
-
-
-@app.route('/', methods=['GET'])
-def hello():
-    return 'I am a develop Bot. Coding ...'
+# @app.route('/webhook', methods=['POST'])
+# def webhook():
+#     update = Update.de_json(request.get_json(force=True), Bot(BOT_TOKEN))
+#     loop = asyncio.get_event_loop()
+#     future = loop.run_in_executor(None, application.start)
+#     result = future.result()
+#     return result
+#
+#
+# @app.route('/', methods=['GET'])
+# def hello():
+#     return 'I am a develop Bot. Coding ...'
