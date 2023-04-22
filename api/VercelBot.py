@@ -1,12 +1,11 @@
 import os
-import requests
+import httpx
 import leancloud
 from typing import List
 from telegram import Update, Bot
 from telegram.ext import CallbackContext, Dispatcher, CommandHandler, MessageHandler
 from telegram.ext import filters
 from telegram.ext.filters import MessageFilter
-import httpx
 from flask import Flask, request
 
 # 定义常量
