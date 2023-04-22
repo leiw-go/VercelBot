@@ -1,11 +1,12 @@
 import os
 import requests
 import leancloud
+from typing import List
 from telegram import Update, Bot
-from telegram.ext import *
+from telegram.ext import CallbackContext, Dispatcher, CommandHandler, MessageHandler
 from telegram.ext import filters
 from telegram.ext.filters import MessageFilter
-from httpx import AsyncClient
+import httpx
 from flask import Flask, request
 
 # 定义常量
@@ -16,11 +17,9 @@ APP_KEY = os.getenv('LEANCLOUD_APP_KEY')
 # 初始化
 app = Flask(__name__)
 leancloud.init(APP_ID, APP_KEY)
-client = AsyncClient()
-urls = []
 
 bot = Bot(token=BOT_TOKEN)
-dispatcher = Dispatcher(bot, None, workers=0)
+dispatcher = Dispatcher(bot=bot, workers=0)
 
 # 用你的数据表名称替换
 linksTable = leancloud.Object.extend('links')
@@ -50,7 +49,8 @@ async def command_show(update: Update, context: CallbackContext):
         await context.bot.sendMessage(chat_id=update.effective_chat.id, text='videos are empty, add your collected link')
     else:
         files = [row.get('file_id') for row in results]
-        getUrl(files)
+        urls = []
+        await getUrl(files, urls)
         await context.bot.send_message(chat_id=update.effective_chat.id, text='\n'.join(urls))
     await context.bot.sendMessage(chat_id=update.effective_chat.id, text='All girl shows here')
     return 'ok'
@@ -87,12 +87,13 @@ class FilterAwesome(MessageFilter):
         return message.text.startswith('http') or message.text.startswith('https')
 
 
-def getUrl(files) -> urls:
-    for fileId in files:
-        response = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getFile?file_id={fileId}")
-        file_path = response.json()["result"]["file_path"]
-        file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
-        urls.append(file_url)
+async def getUrl(files: List[str], urls: List[str]) -> List[str]:
+    async with httpx.AsyncClient() as client:
+        for fileId in files:
+            response = await client.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getFile?file_id={fileId}")
+            file_path = response.json()["result"]["file_path"]
+            file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
+            urls.append(file_url)
     return urls
 
 
