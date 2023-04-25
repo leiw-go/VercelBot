@@ -21,7 +21,7 @@ leancloud.init(APP_ID, APP_KEY)
 MyTable = leancloud.Object.extend('links')
 
 
-async def command_all(update: Update, context: CallbackContext):
+def command_all(update: Update, context: CallbackContext):
     query = MyTable.query
     results = query.find()
     if results is None:
