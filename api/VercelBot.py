@@ -31,6 +31,7 @@ async def command_all(update: Update, context: CallbackContext):
         bot.send_message(chat_id=update.effective_chat.id, text='\n'.join(links))
     return 'ok'
 
+
 def message_group_link(update: Update, context):
     # 在这里处理接收到的消息
     chat_id = update.message.chat_id
@@ -44,7 +45,7 @@ def message_group_link(update: Update, context):
         bot.send_message(chat_id=chat_id, text=f"您发送了: {text}")
 
 
-dispatcher.add_handler(CommandHandler('/all', command_all))
+dispatcher.add_handler(CommandHandler('all', command_all))
 dispatcher.add_handler(MessageHandler(Filters.text, message_group_link))
 
 
