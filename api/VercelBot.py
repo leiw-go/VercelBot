@@ -32,13 +32,17 @@ def command_all(update: Update, context: CallbackContext):
     return 'ok'
 
 
+def command_great(update: Update, context: CallbackContext):
+    chat_id = update.message.chat_id
+    bot.sendMessage(chat_id=chat_id, text='Great girls adding ...')
+    return 'ok'
+
+
 def message_group_link(update: Update, context):
     # 在这里处理接收到的消息
     chat_id = update.message.chat_id
     text = update.message.text
-    if text == '/great':
-        handle_great(update)
-    elif text.startswith('http') or text.startswith('https'):
+    if text.startswith('http') or text.startswith('https'):
         handle_add_link(update)
     else:
         bot.sendMessage(chat_id=chat_id, text='Please send a valid command or link')
@@ -46,6 +50,7 @@ def message_group_link(update: Update, context):
 
 
 dispatcher.add_handler(CommandHandler('all', command_all))
+dispatcher.add_handler(CommandHandler('great', command_great))
 dispatcher.add_handler(MessageHandler(Filters.text, message_group_link))
 
 
@@ -67,12 +72,6 @@ def handle_all(update: Update):
     results = query.find()
     links = [row.get('link') for row in results]
     bot.sendMessage(chat_id=chat_id, text='\n'.join(links))
-    return 'ok'
-
-
-def handle_great(update: Update):
-    chat_id = update.message.chat_id
-    bot.sendMessage(chat_id=chat_id, text='Great girls adding ...')
     return 'ok'
 
 
