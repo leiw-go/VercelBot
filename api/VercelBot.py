@@ -60,7 +60,7 @@ def message_great_video(update: Update, context: CallbackContext):
     videos = videosTable()
     videos.set('file_id', file_id)
     videos.save()
-    await context.bot.sendMessage(chat_id=update.effective_chat.id, text='thinks for your video')
+    bot.sendMessage(chat_id=update.effective_chat.id, text='thinks for your video')
     return 'ok'
 
 
